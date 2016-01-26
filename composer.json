@@ -2,14 +2,21 @@
     "name": "falur/blocks",
     "type": "library",
     "description": "Php Blocks",
-    "version": "0.2.0",
+    "keywords": ["block"],
     "license": "MIT",
     "require": {
-        "php": ">=5.5.0"
+        "php": ">=5.4.0"
     },
+    "authors": [
+        {
+            "name": "Ildar Enakaev",
+            "email": "ienakaev@ya.ru"
+        }
+    ],
     "autoload": {
         "psr-4": {
             "Falur\\Blocks\\": "src/"
         }
-    }
+    },
+    "minimum-stability": "dev"
 }
