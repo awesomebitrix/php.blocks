@@ -18,14 +18,14 @@ class BlockControl
      *
      * @var array
      */
-    protected $not = [];
+    protected $not = ['/'];
 
     /**
      * Массив со страницами и регулярными выражениями где показывать блок
      *
      * @var array
      */
-    protected $show = [];
+    protected $show = ['\*'];
 
     /**
      * Конструктор
@@ -67,11 +67,14 @@ class BlockControl
      * Проверяет необходимо ли показывать блок и если да то возвращает отображение блока
      *
      * @param type $template
-     * @return \Falur\Blocks\BlockControl
      */
     public function render($template = 'default')
     {
-        return $this->block->render($template);
+        if ($this->isShow()) {
+            return $this->block->render($template);
+        }
+
+        return false;
     }
 
     /**
@@ -94,6 +97,51 @@ class BlockControl
      */
     protected function isShow()
     {
+        $current = trim($this->getPathUrl(), '/');
 
+        foreach ($this->not as $not) {
+            if ($this->check($not, $current)) {
+                return false;
+            }
+        }
+
+        if (in_array('\*', $this->show)) {
+            return true;
+        }
+
+        foreach ($this->show as $show) {
+            if ($this->check($show, $current)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    /**
+     * Проверяет совпадает ли $page и $current
+     *
+     * @param string $page
+     * @param string $current
+     * @return boolean
+     */
+    protected function check($page, $current)
+    {
+        $trmPage = trim($page, '/');
+        $pattern = '#' . $trmPage . '#';
+        return $current == $trmPage
+               || (preg_match($pattern, $current) && $pattern != '##');
+    }
+
+    /**
+     * Получает путь текущего адреса
+     *
+     * @return string
+     */
+    protected function getPathUrl()
+    {
+        $url = $_SERVER['REQUEST_URI'];
+
+        return parse_url($url, \PHP_URL_PATH);
     }
 }
